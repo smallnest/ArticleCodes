@@ -1,0 +1,4 @@
+org.apache.http.impl.client.CloseableHttpClient.doExecute
+org.apache.http.impl.client.CloseableHttpClient.execute
+java.net.URL.openConnection
+java.net.HttpURLConnection.getResponseMessage

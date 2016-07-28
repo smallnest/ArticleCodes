@@ -1,0 +1,1 @@
+java -javaagent:./quasar-core-0.7.5-jdk8.jar=bm -jar target/quasar-1.0.jar

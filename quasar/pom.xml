@@ -1,0 +1,135 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.colobu.fiber</groupId>
+    <artifactId>quasar</artifactId>
+    <version>1.0</version>
+    <description>
+        mvn clean compile dependency:properties exec:exec
+    </description>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>quasar-core</artifactId>
+            <version>0.7.5</version>
+            <classifier>jdk8</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>comsat-httpclient</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <!-- Update version to suit your needs -->
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <manifestEntries>
+                                <Main-Class>com.colobu.fiber.Helloworld3</Main-Class>
+                                <X-Compile-Source-JDK>1.8</X-Compile-Source-JDK>
+                                <X-Compile-Target-JDK>1.8</X-Compile-Target-JDK>
+                            </manifestEntries>
+                        </transformer>
+                    </transformers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>co.paralleluniverse</groupId>
+                        <artifactId>quasar-core</artifactId>
+                        <version>0.7.5</version>
+                        <classifier>jdk8</classifier>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>guava</artifactId>
+                        <version>19.0</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>instrument-classes</id>
+                        <phase>compile</phase>
+
+                        <configuration>
+                            <tasks>
+                                <property name="ant_classpath" refid="maven.dependency.classpath"/>
+                                <taskdef name="instrumentationTask"
+                                         classname="co.paralleluniverse.fibers.instrument.InstrumentationTask"
+                                         classpath="${co.paralleluniverse:quasar-core:jar:jdk8}:${project.build.directory}/classes/"/>
+                                <instrumentationTask allowMonitors="true" allowBlocking="true" check="true" verbose="true" debug="true">
+                                    <fileset dir="${project.build.directory}/classes/" includes="**/*"/>
+                                </instrumentationTask>
+                            </tasks>
+                        </configuration>
+
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.5.1</version>
+                <executions>
+                    <execution>
+                        <id>getClasspathFilenames</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+        </plugins>
+    </build>
+</project>
